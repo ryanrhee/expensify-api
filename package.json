@@ -1,0 +1,32 @@
+{
+  "name": "expensify-integration",
+  "version": "1.0.0",
+  "description": "API access to the Expensify Integration Server",
+  "main": "index.js",
+  "scripts": {
+    "build": "yarn run build:clean && yarn run build:js && yarn run build:flow",
+    "build:clean": "/bin/rm -rf dist/",
+    "build:js": "yarn run babel src/ -d dist/",
+    "build:flow": "yarn run flow gen-flow-files ./src --out-dir ./dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryanrhee/expensify-integration.git"
+  },
+  "author": "Ryan Rhee",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ryanrhee/expensify-integration/issues"
+  },
+  "homepage": "https://github.com/ryanrhee/expensify-integration#readme",
+  "dependencies": {
+    "node-fetch": "^2.1.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-preset-flow": "^6.23.0",
+    "flow-bin": "^0.69.0"
+  }
+}

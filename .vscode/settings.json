@@ -1,0 +1,10 @@
+{
+    // VSCode assumes typescript
+    "javascript.validate.enable": false,
+
+    // Flow is installed via yarn
+    "flow.useNPMPackagedFlow": true,
+
+    // 80-col
+    "editor.rulers": [80]
+}
