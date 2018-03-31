@@ -1,11 +1,6 @@
-// @flow
+// @flow strict
 
-const fetch = require("node-fetch");
-
-type Credentials = {
-    partnerUserID: string,
-    partnerUserSecret: string
-};
+import type Credentials from 'request';
 
 class Expensify {
     credentials: Credentials;
