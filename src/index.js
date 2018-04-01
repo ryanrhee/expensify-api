@@ -9,6 +9,10 @@ class Expensify {
     constructor(credentials: Credentials) {
         this.client = new APIClient(credentials);
     }
+
+    async getPolicyID(): Promise<string> {
+        return await this.client.getPolicyID();
+    }
 }
 
 export default Expensify;

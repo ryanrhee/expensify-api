@@ -66,6 +66,7 @@ class APIClient {
             throw new Error('There are no policies on the account');
         }
 
+        console.info('there are ' + policies.length + ' policies');
         this.policyID = policies[0].id;
         return this.policyID;
     }

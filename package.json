@@ -8,7 +8,9 @@
     "build:clean": "/bin/rm -rf dist/",
     "build:js": "yarn run babel src/ -d dist/",
     "build:flow": "yarn run flow gen-flow-files ./src --out-dir ./dist",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "yarn run auth:ensure && yarn run babel-node ./src/test.js",
+    "auth:ensure": "./scripts/ensure_auth.sh",
+    "auth:gen": "./scripts/gen_auth.sh"
   },
   "repository": {
     "type": "git",
@@ -21,6 +23,7 @@
   },
   "homepage": "https://github.com/ryanrhee/expensify-integration#readme",
   "dependencies": {
+    "mz": "^2.7.0",
     "node-fetch": "^2.1.2"
   },
   "devDependencies": {
