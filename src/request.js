@@ -1,24 +1,35 @@
 // @flow strict
 
+import fetch from 'node-fetch';
+
 export type Credentials = {
     partnerUserID: string,
     partnerUserSecret: string
 };
 
-const endpoint: string =
+const url: string =
     'https://integrations.expensify.com' +
     '/Integration-Server/ExpensifyIntegrations';
 
-class Request {
-    type: string;
+class APIClient {
     credentials: Credentials;
-    inputSettings: Object;
 
-    constructor(type: string, credentials: Credentials, inputSettings: Object) {
-        this.type = type;
+    constructor(credentials: Credentials) {
         this.credentials = credentials;
-        this.inputSettings = inputSettings;
+    }
+
+    async _request<T>(type: string, inputSettings: Object): Promise<T> {
+        const body = JSON.stringify({
+            type: type,
+            credentials: this.credentials,
+            inputSettings: inputSettings,
+        });
+
+        return await fetch(url, {
+            method: 'POST',
+            body: 'requestJobDescription=' + body
+        });
     }
 }
 
-module.exports = Request;
+module.exports = APIClient;

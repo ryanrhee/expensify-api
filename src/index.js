@@ -1,12 +1,13 @@
 // @flow strict
 
 import type Credentials from 'request';
+import APIClient from 'request';
 
 class Expensify {
-    credentials: Credentials;
+    client: APIClient;
 
     constructor(credentials: Credentials) {
-        this.credentials = credentials;
+        this.client = new APIClient(credentials);
     }
 }
 
