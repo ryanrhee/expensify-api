@@ -1,12 +1,6 @@
 // @flow strict
 
 import fetch from 'node-fetch';
-import type {
-    CreateReportRequest,
-    CreateReportResponse,
-    CreateReportFailure,
-    CreateReportSuccess
-} from './create-report-request';
 
 export type Credentials = {
     partnerUserID: string,
@@ -44,45 +38,23 @@ class APIRequest<TReq, TResp> {
             throw new Error(
                 'HTTP status ' + response.status + ': ' + response.statusText);
         }
-        let rawResponse: Object = await response.json();
-        const responseCode: number|typeof undefined = rawResponse.responseCode;
+        let rawResponse = await response.json();
+        return this.sanitizeResponse(rawResponse);
+    }
+
+    // This sanitization could be better.
+    // If only we could utilize the flow types at runtime to validate ...
+    sanitizeResponse(rawResponse: any): TResp {
+        let responseObject: Object = rawResponse;
+        const responseCode: number|typeof undefined
+            = responseObject.responseCode;
         if (responseCode === undefined) {
             throw new Error('JSON response is missing key "responseCode"');
         } else {
-            rawResponse.isSuccess = responseCode === 200;
+            responseObject.isSuccess = responseCode === 200;
         }
-        return (rawResponse: any);
+        return (responseObject: any);
     }
 }
 
-class APIClient {
-    credentials: Credentials;
-
-    constructor(credentials: Credentials) {
-        this.credentials = credentials;
-    }
-
-    async createReport(title: string, email: string) {
-        const requestBody: CreateReportRequest = {
-            type: 'report',
-            employeeEmail: email,
-            report: {
-                title: title,
-            },
-            expenses: [],
-            policyID: '_REPLACE_',
-        };
-        const request: APIRequest<CreateReportRequest, CreateReportResponse> =
-            new APIRequest(this.credentials, 'create', requestBody);
-        const response = await request.execute();
-        if (response.isSuccess) {
-            return response.reportID;
-        } else {
-            throw new Error(
-                'error code ' + response.responseCode + '; ' +
-                response.responseMessage);
-        }
-    }
-}
-
-export default APIClient;
+export default APIRequest;

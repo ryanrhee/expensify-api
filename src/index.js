@@ -1,6 +1,6 @@
 // @flow strict
 
-import type Credentials from 'request';
+import type { Credentials } from './request';
 import APIClient from 'request';
 
 class Expensify {
