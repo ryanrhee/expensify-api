@@ -5,7 +5,8 @@ import { URLSearchParams } from 'url';
 
 export type Credentials = {
     partnerUserID: string,
-    partnerUserSecret: string
+    partnerUserSecret: string,
+    email: string,
 };
 
 const integrationURL: string =

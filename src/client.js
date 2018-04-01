@@ -22,7 +22,7 @@ class APIClient {
         this.credentials = credentials;
     }
 
-    async createReport(title: string, email: string) {
+    async createReport(title: string, email: string): Promise<string> {
         const policyID = await this.getPolicyID();
         const requestBody: CreateReportRequest = {
             type: 'report',
