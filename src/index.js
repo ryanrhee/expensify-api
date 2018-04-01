@@ -11,4 +11,4 @@ class Expensify {
     }
 }
 
-module.exports = Expensify;
+export default Expensify;
