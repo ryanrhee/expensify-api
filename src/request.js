@@ -8,7 +8,7 @@ export type Credentials = {
     partnerUserSecret: string
 };
 
-const url: string =
+const integrationURL: string =
     'https://integrations.expensify.com' +
     '/Integration-Server/ExpensifyIntegrations';
 
@@ -32,7 +32,7 @@ class APIRequest<TReq, TResp> {
         const requestBody = new URLSearchParams();
         requestBody.append('requestJobDescription', JSON.stringify(body));
         console.info(requestBody.toString());
-        const response = await fetch(url, {
+        const response = await fetch(integrationURL, {
             method: 'POST',
             body: requestBody
         });
