@@ -7,11 +7,11 @@ import type {
     CreateReportResponse,
     CreateReportFailure,
     CreateReportSuccess
-} from './create-report-types';
+} from './types/create-report-types';
 import type {
     GetPolicyListRequest,
     GetPolicyListResponse
-} from './get-policy-list-types';
+} from './types/get-policy-list-types';
 
 
 class APIClient {
