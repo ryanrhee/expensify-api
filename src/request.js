@@ -1,6 +1,7 @@
 // @flow strict
 
 import fetch from 'node-fetch';
+import { URLSearchParams } from 'url';
 
 export type Credentials = {
     partnerUserID: string,
@@ -23,15 +24,17 @@ class APIRequest<TReq, TResp> {
     }
 
     async execute(): Promise<TResp> {
-        const body = JSON.stringify({
+        const body = {
             type: this.type,
             credentials: this.credentials,
             inputSettings: this.inputSettings,
-        });
-
+        };
+        const requestBody = new URLSearchParams();
+        requestBody.append('requestJobDescription', JSON.stringify(body));
+        console.info(requestBody.toString());
         const response = await fetch(url, {
             method: 'POST',
-            body: 'requestJobDescription=' + body
+            body: requestBody
         });
 
         if (!response.ok) {
