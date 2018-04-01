@@ -7,7 +7,7 @@ import type {
     CreateReportResponse,
     CreateReportFailure,
     CreateReportSuccess
-} from './create-report-request';
+} from './create-report-types';
 import type {
     GetPolicyListRequest,
     GetPolicyListResponse
