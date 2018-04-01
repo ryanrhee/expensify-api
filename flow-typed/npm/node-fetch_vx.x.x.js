@@ -5,6 +5,7 @@
  * From https://github.com/flowtype/flow-typed/blob/7e7beb7540ce1b08fb4ef6455d611ed06a2185b4/definitions/npm/node-fetch_v1.x.x/flow_v0.44.x-/node-fetch_v1.x.x.js
  * Small modifications for changes in v2
  */
+import type Stream from 'stream';
 
 declare module 'node-fetch' {
   declare export class Request mixins Body {
@@ -107,7 +108,9 @@ declare module 'node-fetch' {
   }
 
   declare type HeaderInit = Headers | Array<string>;
-  declare type BodyInit = string;
+
+  // notably missing Blob
+  declare type BodyInit = string|Buffer|URLSearchParams|Stream|stream$Readable|ArrayBuffer;
 
   declare export default function fetch(url: string | Request, init?: RequestInit): Promise<Response>
 }
