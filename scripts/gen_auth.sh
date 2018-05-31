@@ -1,5 +1,7 @@
 #!/bin/bash
-
+echo 'Regenerate API tokens here:'
+echo 'https://www.expensify.com/tools/integrations/'
+echo ''
 echo 'Enter partner user id and press [ENTER]'
 read userid
 echo 'Enter partner user secret and press [ENTER]'
