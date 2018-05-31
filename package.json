@@ -4,11 +4,11 @@
   "description": "API access to the Expensify Integration Server",
   "main": "index.js",
   "scripts": {
-    "build": "yarn run build:clean && yarn run build:js && yarn run build:flow",
+    "build": "yarn run build:clean && yarn run build:ts",
     "build:clean": "/bin/rm -rf dist/",
-    "build:js": "yarn run babel src/ -d dist/",
-    "build:flow": "yarn run flow gen-flow-files ./src --out-dir ./dist",
-    "test": "yarn run auth:ensure && yarn run babel-node ./src/test.js",
+    "build:ts": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "yarn run auth:ensure && yarn run ts-node ./src/test.ts",
     "auth:ensure": "./scripts/ensure_auth.sh",
     "auth:gen": "./scripts/gen_auth.sh"
   },
@@ -27,9 +27,10 @@
     "node-fetch": "^2.1.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
-    "babel-preset-flow": "^6.23.0",
-    "flow-bin": "^0.69.0"
+    "@types/mz": "^0.0.32",
+    "@types/node": "^10.1.4",
+    "@types/node-fetch": "^2.1.0",
+    "ts-node": "^6.0.5",
+    "typescript": "^2.8.4"
   }
 }

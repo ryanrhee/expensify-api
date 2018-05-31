@@ -2,12 +2,12 @@
 API access to the Expensify Integration Server
 
 ## Static Typechecking & Transpiling
-This project uses (flow types)[https://flow.org].
+This project uses [typescript](https://www.typescriptlang.org).
 
 Files in dist/ are generated with files from src/.
-Each .js file in src/ is split into two files in dist:
-  - non-typed, node-executable .js file
-  - flow-type declaration .js.flow file
+Each .ts file in src/ is split into two files in dist:
+  - non-typed, node-executable `.js` file
+  - typescript type declaration `.d.ts` file
 
 To transpile from src/ to dist/, use:
 
@@ -18,13 +18,13 @@ $ yarn run build
 To typecheck only, use:
 
 ```
-$ yarn run flow
+$ yarn run typecheck
 ```
 
-To execute a js file without explicitly compiling, use `node-babel`:
+To execute a js file without explicitly compiling, use `ts-node`:
 
 ```
-$ yarn run node-babel src/some-file.js
+$ yarn run ts-node src/some-file.js
 ```
 
 ## Testing

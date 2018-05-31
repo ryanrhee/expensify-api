@@ -1,22 +1,22 @@
-// @flow strict
-
-import type { Credentials } from './request';
+import { Credentials } from './request';
 import APIRequest from './request';
-import type {
+import {
     CreateReportRequest,
     CreateReportResponse,
     CreateReportFailure,
-    CreateReportSuccess
+    CreateReportSuccess,
+    isCreateReportSuccess
 } from './types/create-report-types';
-import type {
+import {
     GetPolicyListRequest,
-    GetPolicyListResponse
+    GetPolicyListResponse,
+    isGetPolicyListSuccess
 } from './types/get-policy-list-types';
 
 
 class APIClient {
     credentials: Credentials;
-    policyID: ?string;
+    policyID: string | undefined;
 
     constructor(credentials: Credentials) {
         this.credentials = credentials;
@@ -36,7 +36,7 @@ class APIClient {
         const request: APIRequest<CreateReportRequest, CreateReportResponse> =
             new APIRequest(this.credentials, 'create', requestBody);
         const response = await request.execute();
-        if (response.isSuccess) {
+        if (isCreateReportSuccess(response)) {
             return response.reportID;
         } else {
             throw new Error(
@@ -56,7 +56,7 @@ class APIClient {
         const request: APIRequest<GetPolicyListRequest, GetPolicyListResponse> =
             new APIRequest(this.credentials, 'get', requestBody);
         const response = await request.execute();
-        if (!response.isSuccess) {
+        if (!isGetPolicyListSuccess(response)) {
             throw new Error(
                 'error code ' + response.responseCode + '; ' +
                 response.responseMessage);

@@ -1,6 +1,4 @@
-// @flow strict
-
-import type { Credentials } from './request';
+import { Credentials } from './request';
 import ExpensifyReport from './report';
 import APIClient from './client';
 

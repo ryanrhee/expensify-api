@@ -1,6 +1,4 @@
-// @flow strict
-
-type Report = {
+export interface Report {
     title: string;
 
     // Values for custom fields on the specified policyID.
@@ -8,10 +6,10 @@ type Report = {
     // A series of JSON objects whose key is the name of the report field to
     // modify, and the value is the value to set. The key needs to have all
     // non-alphanumerical characters replaced with underscores (_).
-    fields?: {[string]: string};
+    fields?: {[key: string]: string};
 };
 
-type Expense = {
+export interface Expense {
     merchant: string;
 
     // The currency in which the transaction was made.
@@ -30,7 +28,7 @@ type Expense = {
     amount: number;
 };
 
-export type CreateReportRequest = {
+export interface CreateReportRequest {
     type: 'report';
     employeeEmail: string;
     report: Report;
@@ -38,17 +36,21 @@ export type CreateReportRequest = {
     policyID: string;
 };
 
-export type CreateReportSuccess = {
-    isSuccess: true,
-    responseCode: 200,
-    reportName: string,
-    reportID: string,
+export interface CreateReportSuccess extends BaseResponse {
+    responseCode: 200;
+    reportName: string;
+    reportID: string;
 }
 
-export type CreateReportFailure = {
-    isSuccess: false,
-    responseCode: number,
-    responseMessage: string,
+export interface CreateReportFailure extends BaseResponse {
+    responseCode: number;
+    responseMessage: string;
 }
 
-export type CreateReportResponse = CreateReportSuccess | CreateReportFailure;
+export type CreateReportResponse = CreateReportSuccess | CreateReportFailure
+
+export function isCreateReportSuccess(
+    response: CreateReportResponse
+): response is CreateReportSuccess {
+    return (<CreateReportSuccess>response).responseCode === 200;
+}

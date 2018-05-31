@@ -1,6 +1,4 @@
-// @flow strict
-
-type ExpensifyReportInit = {
+export interface ExpensifyReportInit {
     title: string;
     email: string;
     id: string;

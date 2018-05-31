@@ -1,9 +1,7 @@
-// @flow strict
-
 import fetch from 'node-fetch';
 import { URLSearchParams } from 'url';
 
-export type Credentials = {
+export interface Credentials {
     partnerUserID: string,
     partnerUserSecret: string,
     email: string,
@@ -13,7 +11,7 @@ const integrationURL: string =
     'https://integrations.expensify.com' +
     '/Integration-Server/ExpensifyIntegrations';
 
-class APIRequest<TReq, TResp> {
+class APIRequest<TReq, TResp extends BaseResponse> {
     credentials: Credentials;
     type: string;
     inputSettings: TReq;
@@ -42,22 +40,8 @@ class APIRequest<TReq, TResp> {
             throw new Error(
                 'HTTP status ' + response.status + ': ' + response.statusText);
         }
-        let rawResponse = await response.json();
-        return this.sanitizeResponse(rawResponse);
-    }
-
-    // This sanitization could be better.
-    // If only we could utilize the flow types at runtime to validate ...
-    sanitizeResponse(rawResponse: any): TResp {
-        let responseObject: Object = rawResponse;
-        const responseCode: number|typeof undefined
-            = responseObject.responseCode;
-        if (responseCode === undefined) {
-            throw new Error('JSON response is missing key "responseCode"');
-        } else {
-            responseObject.isSuccess = responseCode === 200;
-        }
-        return (responseObject: any);
+        // consider runtime-checking the JSON for conformance
+        return await response.json() as TResp;
     }
 }
 
