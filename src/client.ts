@@ -16,14 +16,21 @@ import {
 
 class APIClient {
     credentials: Credentials;
-    policyID: string | undefined;
+    policyID: string;
 
-    constructor(credentials: Credentials) {
+    // typescript doesn't support `this` as a type on static functions.
+    // https://github.com/Microsoft/TypeScript/issues/5863
+    static async newClient(credentials: Credentials): Promise<APIClient> {
+        const policyID = await this.getPolicyID(credentials);
+        return new APIClient(credentials, policyID);
+    }
+
+    private constructor(credentials: Credentials, policyID: string) {
         this.credentials = credentials;
+        this.policyID = policyID;
     }
 
     async createReport(title: string, email: string): Promise<string> {
-        const policyID = await this.getPolicyID();
         const requestBody: CreateReportRequest = {
             type: 'report',
             employeeEmail: email,
@@ -31,7 +38,7 @@ class APIClient {
                 title: title,
             },
             expenses: [],
-            policyID: policyID,
+            policyID: this.policyID,
         };
         const request: APIRequest<CreateReportRequest, CreateReportResponse> =
             new APIRequest(this.credentials, 'create', requestBody);
@@ -46,15 +53,14 @@ class APIClient {
     }
 
     // Just get any policy ID and fill it in, I guess?
-    async getPolicyID(): Promise<string> {
-        if (this.policyID) {
-            return this.policyID;
-        }
+    private static async getPolicyID(
+        credentials: Credentials,
+    ): Promise<string> {
         const requestBody: GetPolicyListRequest = {
             type: 'policyList',
         };
         const request: APIRequest<GetPolicyListRequest, GetPolicyListResponse> =
-            new APIRequest(this.credentials, 'get', requestBody);
+            new APIRequest(credentials, 'get', requestBody);
         const response = await request.execute();
         if (!isGetPolicyListSuccess(response)) {
             throw new Error(
@@ -66,9 +72,12 @@ class APIClient {
             throw new Error('There are no policies on the account');
         }
 
-        console.info('there are ' + policies.length + ' policies');
-        this.policyID = policies[0].id;
-        return this.policyID;
+        if (policies.length > 1) {
+            console.warn(
+                'there are ' + policies.length + ' policies. defaulting to ' +
+                'the first one');
+        }
+        return policies[0].id;
     }
 }
 
