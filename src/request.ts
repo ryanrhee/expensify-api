@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import { URLSearchParams } from 'url';
+import { BaseResponse } from './client';
 
 export interface Credentials {
     partnerUserID: string,
@@ -11,7 +12,7 @@ const integrationURL: string =
     'https://integrations.expensify.com' +
     '/Integration-Server/ExpensifyIntegrations';
 
-class APIRequest<TReq, TResp extends BaseResponse> {
+export class APIRequest<TReq, TResp extends BaseResponse> {
     credentials: Credentials;
     type: string;
     inputSettings: TReq;
@@ -44,5 +45,3 @@ class APIRequest<TReq, TResp extends BaseResponse> {
         return await response.json() as TResp;
     }
 }
-
-export default APIRequest;

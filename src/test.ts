@@ -6,13 +6,14 @@ import Expensify from './index';
 
 import fs from 'mz/fs';
 import path from 'path';
+import { Credentials } from './request';
 
 (async () => {
     const credentials = JSON.parse(
         await fs.readFile(path.join(__dirname, '../credentials.json'), "utf-8")
-    );
-    const e = new Expensify(credentials);
-    const policyID = await e.getPolicyID();
+    ) as Credentials;
+    const e = await Expensify.newClient(credentials);
+    const policyID = await e.policyID;
     console.info('policy ID: ' + policyID);
 })()
 .then(() => {
