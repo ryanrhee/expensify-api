@@ -34,7 +34,8 @@ export class APIRequest<TReq, TResp extends BaseResponse> {
         };
         const requestBody = new URLSearchParams();
         requestBody.append('requestJobDescription', JSON.stringify(body));
-        console.info(requestBody.toString());
+        console.info('Request:');
+        console.dir(body, { depth: null, colors: true });
         const response = await fetch(integrationURL, {
             method: 'POST',
             body: requestBody
