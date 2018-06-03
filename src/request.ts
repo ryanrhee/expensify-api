@@ -1,12 +1,15 @@
 import fetch from 'node-fetch';
 import { URLSearchParams } from 'url';
+import * as t from "io-ts";
 import { BaseResponse } from './client';
 
-export interface Credentials {
-    partnerUserID: string,
-    partnerUserSecret: string,
-    email: string,
-};
+export const CredentialsCoder = t.exact(t.type({
+    partnerUserID: t.string,
+    partnerUserSecret: t.string,
+    email: t.string,
+}));
+
+export type Credentials = t.TypeOf<typeof CredentialsCoder>
 
 const integrationURL: string =
     'https://integrations.expensify.com' +
