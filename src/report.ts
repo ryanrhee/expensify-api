@@ -6,6 +6,7 @@ import {
     BaseResponse,
     FailureResponse,
 } from './client';
+import { URLSearchParams } from 'url';
 
 interface ReportIn {
     title: string;
@@ -90,5 +91,38 @@ export class Report {
         }
     
         return new Report(requestBody, response);
+    }
+
+    async submit(client: APIClient): Promise<void> {
+        const page = client.page;
+        if (page.url() !== this.url().toString()) {
+            console.log(
+                'reloading bc urls differ. \npage: %s\nthis: %s',
+                page.url(),
+                this.url().toString(),
+            )
+            await page.goto(this.url().toString());
+            // waitForNavigation doesn't work here, not sure why
+            await client.sleep(5);
+        }
+
+        await page.click('#report_button_submit');
+        await client.sleep(1);
+        await page.click('#popup_button_send');
+        // TODO: probably have to wait for submission to finish?
+        // hard to test without actually submitting a report tho
+        // just assume 10 secs is enough for now i guess
+        await client.sleep(10);
+    }
+
+    url(): URL {
+        let url = new URL('https://www.expensify.com/report');
+        url.search = new URLSearchParams({
+            'param': JSON.stringify({
+                'pageReportID': this.id,
+                'keepCollection': 'true', // not sure what this is
+            }),
+        }).toString();
+        return url;
     }
 }

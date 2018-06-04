@@ -1,12 +1,8 @@
 import puppeteer from 'puppeteer';
 import fs from 'mz/fs';
 import { URLSearchParams, URL } from 'url';
-import { Credentials } from './client';
-
-// only for debugging
-function sleep(sec: number) {
-    return new Promise(resolve => setTimeout(resolve, sec * 1000));
-}
+import { Credentials, APIClient } from './client';
+import { Report } from './report';
 
 const expensifyCookiesFile = __dirname + '/../expensifyCookies.json';
 
@@ -21,39 +17,30 @@ export interface ExpenseMetadata {
 }
 
 export const createExpense = async (
-    reportID: string,
+    report: Report,
     metadata: ExpenseMetadata,
-    credentials: Credentials,
+    client: APIClient,
 ): Promise<void> => {
-    const browser = await puppeteer.launch({headless: false});
-    const page = await browser.newPage();
     if (await fs.exists(expensifyCookiesFile)) {
         const cookiesJSON = await fs.readFile(expensifyCookiesFile, 'utf-8');
-        page.setCookie(...JSON.parse(cookiesJSON));
+        client.page.setCookie(...JSON.parse(cookiesJSON));
     }
-    try {
-        await createExpenseImpl(reportID, metadata, page, credentials);
-    } finally {
-        await sleep(300);
-        page.close();
-        browser.close();
-    }
+    await createExpenseImpl(
+        report,
+        metadata,
+        client,
+    );
 }
 
 const createExpenseImpl = async (
-    reportID: string,
+    report: Report,
     metadata: ExpenseMetadata,
-    page: puppeteer.Page,
-    credentials: Credentials,
+    client: APIClient,
 ) => {
-    let url = new URL('https://www.expensify.com/report');
-    url.search = new URLSearchParams({
-        'param': JSON.stringify({
-            'pageReportID': reportID,
-            'keepCollection': 'true', // not sure what this is
-        }),
-    }).toString();
-    await page.goto(url.toString(), {
+    const page = client.page;
+    const credentials = client.credentials;
+
+    await page.goto(report.url().toString(), {
         waitUntil: ['load', 'domcontentloaded', 'networkidle0'],
     });
 
@@ -61,7 +48,7 @@ const createExpenseImpl = async (
         await login(page, credentials);
     }
     
-    await addExpense(metadata, page);
+    await addExpense(metadata, client);
 };
 
 const isLoginPage = (page: puppeteer.Page): boolean => {
@@ -112,8 +99,9 @@ const clearElement = async (
 
 const addExpense = async (
     metadata: ExpenseMetadata,
-    page: puppeteer.Page,
+    client: APIClient,
 ): Promise<void> => {
+    const page = client.page;
     page.click('.button_addExpenses');
     const buttonSelector = '.modal-dialog .btn-success-outline';
     await page.waitForSelector(buttonSelector);
@@ -124,7 +112,7 @@ const addExpense = async (
     };
 
     // TDOO: use mutation observer and wait until X secs pass with no mutations
-    await sleep(1);
+    await client.sleep(1);
 
     const setField = async (
         name: string,
@@ -159,7 +147,7 @@ const addExpense = async (
 
     await page.click('#newExpense3_panes .receiptContainer');
     // TODO: find better signal
-    await sleep(2);
+    await client.sleep(2);
     const uploadButton = await query(
         page,
         'input[type="file"][name="expense_attach"]',
@@ -172,7 +160,11 @@ const addExpense = async (
         'text()[contains(., "1 receipt uploaded")]]');
 
     // TODO: find better signal
-    await sleep(5);
+    await client.sleep(5);
 
     await page.click('.js_save.expenseFormSave');
+
+    // TODO: find better signal
+    await client.sleep(5);
+    console.log('navigation finished');
 }

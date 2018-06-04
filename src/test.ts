@@ -21,7 +21,7 @@ import { CredentialsCoder } from './client';
     if (!CredentialsCoder.is(credentials.value)) {
         throw PathReporter.report(credentials).join("\n");
     }
-    const c = await Expensify.newClient(credentials.value);
+    const c = await Expensify.newClient(credentials.value, { headless: false });
     const r = await c.createReport('Test Report');
     await c.createExpense(r, {
         'merchant': 'test merchant',
@@ -32,6 +32,7 @@ import { CredentialsCoder } from './client';
         'department': 'Engineering',
         'comment': 'test comment',
     });
+    await c.submitReport(r);
 })()
 .then(() => {
     console.info('done');

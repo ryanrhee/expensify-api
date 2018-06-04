@@ -1,4 +1,5 @@
 import * as t from "io-ts";
+import puppeteer from 'puppeteer';
 import { APIRequest } from './request';
 import { Report } from './report';
 import { getPolicyID } from './policy';
@@ -31,19 +32,26 @@ export class APIClient {
     credentials: Credentials;
     policyID: string;
     baseCreateRequest: BaseCreateRequest;
+    browser: puppeteer.Browser;
+    page: puppeteer.Page;
 
     // typescript doesn't support `this` as a type on static functions.
     // https://github.com/Microsoft/TypeScript/issues/5863
     static async newClient(
         credentials: Credentials,
+        options: { headless: boolean },
     ): Promise<APIClient> {
         const policyID = await getPolicyID(credentials);
-        return new APIClient(credentials, policyID);
+        const browser = await puppeteer.launch(options);
+        const page = await browser.newPage();
+        return new APIClient(credentials, policyID, browser, page);
     }
 
     private constructor(
         credentials: Credentials,
         policyID: string,
+        browser: puppeteer.Browser,
+        page: puppeteer.Page,    
     ) {
         this.credentials = credentials;
         this.policyID = policyID;
@@ -51,6 +59,8 @@ export class APIClient {
             type: '<unknown>',
             employeeEmail: credentials.email,
         };
+        this.browser = browser;
+        this.page = page;
     }
 
     async createReport(title: string): Promise<Report> {
@@ -61,6 +71,15 @@ export class APIClient {
         report: Report,
         metadata: ExpenseMetadata,
     ): Promise<void> {
-        return await createExpense(report.id, metadata, this.credentials);
+        return await createExpense(report, metadata, this);
+    }
+
+    async submitReport(report: Report): Promise<void> {
+        return await report.submit(this);
+    }
+
+    // TODO: try to avoid this
+    sleep(sec: number): Promise<void> {
+        return new Promise(resolve => setTimeout(resolve, sec * 1000));
     }
 }
