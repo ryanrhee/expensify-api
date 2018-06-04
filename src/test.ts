@@ -7,35 +7,31 @@ import Expensify from './index';
 import fs from 'mz/fs';
 import path from 'path';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { Credentials, CredentialsCoder } from './request';
-
-const getEmail = () => {
-    const key = 'EXPENSIFY_EMAIL';
-    if (!(key in process.env)) {
-        throw new Error('Missing env var ' + key);
-    }
-
-    return process.env[key];
-}
+import { CredentialsCoder } from './client';
 
 (async () => {
     const credentials = CredentialsCoder.decode(
-        {
-            email: getEmail(),
-            ...JSON.parse(
-                await fs.readFile(
-                    path.join(__dirname, '../credentials.json'),
-                    "utf-8",
-                )
+        JSON.parse(
+            await fs.readFile(
+                path.join(__dirname, '../credentials.json'),
+                "utf-8",
             )
-        }
+        )
     );
     if (!CredentialsCoder.is(credentials.value)) {
         throw PathReporter.report(credentials).join("\n");
     }
-    const e = await Expensify.newClient(credentials.value);
-    const policyID = await e.policyID;
-    console.info('policy ID: ' + policyID);
+    const c = await Expensify.newClient(credentials.value);
+    const r = await c.createReport('Test Report');
+    await c.createExpense(r, {
+        'merchant': 'test merchant',
+        'amount': 15,
+        'date': '2018-06-01',
+        'receiptPath': './sample_receipt.png',
+        'category': 'Cell Phone',
+        'department': 'Engineering',
+        'comment': 'test comment',
+    });
 })()
 .then(() => {
     console.info('done');

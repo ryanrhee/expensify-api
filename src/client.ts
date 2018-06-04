@@ -1,7 +1,18 @@
-import { APIRequest, Credentials } from './request';
+import * as t from "io-ts";
+import { APIRequest } from './request';
 import { Report } from './report';
 import { getPolicyID } from './policy';
+import { createExpense, ExpenseMetadata } from './expense';
 
+
+export const CredentialsCoder = t.exact(t.type({
+    partnerUserID: t.string,
+    partnerUserSecret: t.string,
+    email: t.string,
+    password: t.string,
+}));
+
+export type Credentials = t.TypeOf<typeof CredentialsCoder>
 
 export interface BaseCreateRequest {
     type: string;
@@ -44,5 +55,12 @@ export class APIClient {
 
     async createReport(title: string): Promise<Report> {
         return await Report.create(title, this);
+    }
+
+    async createExpense(
+        report: Report,
+        metadata: ExpenseMetadata,
+    ): Promise<void> {
+        return await createExpense(report.id, metadata, this.credentials);
     }
 }

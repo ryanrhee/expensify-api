@@ -60,3 +60,5 @@ typings/
 credentials.json
 
 dist
+
+expensifyCookies.json

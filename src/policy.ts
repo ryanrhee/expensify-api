@@ -1,5 +1,10 @@
-import { APIRequest, Credentials } from './request'
-import { BaseCreateRequest, BaseResponse, FailureResponse } from './client'
+import { APIRequest } from './request'
+import {
+    BaseCreateRequest,
+    BaseResponse,
+    FailureResponse,
+    Credentials,
+} from './client'
 
 interface GetPolicyListRequest {
     type: 'policyList';
