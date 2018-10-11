@@ -1,7 +1,7 @@
 {
-  "name": "expensify-integration",
-  "version": "1.0.0",
-  "description": "API access to the Expensify Integration Server",
+  "name": "expensify-api",
+  "version": "1.0.1",
+  "description": "API access to Expensify; some actions through puppeteer, some actions through the integration server",
   "main": "index.js",
   "scripts": {
     "build": "yarn run build:clean && yarn run build:ts",

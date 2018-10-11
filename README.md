@@ -1,5 +1,15 @@
-# expensify-integration
-API access to the Expensify Integration Server
+# expensify-api
+API access to Expensify, whether through their "Integration Server" or via
+puppeteer when the official API doesn't expose a way to do certain actions.
+
+## What about the "expensify" npm package?
+
+The [expensify](https://github.com/brendannee/node-expensify) package utilizes
+parts of the expensify API that don't seem to be available anymore. In
+particular, it's unclear how to obtain an AES key and "AES IV" for expensify,
+or how to set a "user secret" to obtain an SSO. It's likely that the library is
+using an older API, as it hasn't been updated in 3+ years at the time of
+writing.
 
 ## Static Typechecking & Transpiling
 This project uses [typescript](https://www.typescriptlang.org).
